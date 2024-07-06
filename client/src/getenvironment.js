@@ -6,7 +6,7 @@ function getEnvironment() {
   const nitjServer = 'https://xceed.nitj.ac.in';
   if (currentURL.includes('localhost')) {
     return development;
-  } else if (currentURL.includes('nitjtt')) {
+  } else if (currentURL.includes('amsss')) {
     return production;
   } else {
     // Default to a specific environment or handle other cases
