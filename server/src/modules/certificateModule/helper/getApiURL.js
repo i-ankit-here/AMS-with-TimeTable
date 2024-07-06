@@ -8,7 +8,7 @@ function getApiURL(url) {
   
     if (currentURL.includes('localhost')) {
       return localhostBackend;
-    } else if (currentURL.includes('amsss')) {
+    } else if (currentURL.includes('ams')) {
         console.log("onrender");
       return productionFrontend;
     } else if (currentURL.includes('xceed.nitj.ac.in')) {
