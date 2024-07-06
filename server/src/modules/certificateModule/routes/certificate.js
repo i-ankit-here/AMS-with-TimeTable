@@ -10,6 +10,8 @@ const {convertToObject} = require("../controllers/formDataToObject")
 // Route to create a new certificate
 certificateRouter.post("/content/:id", ecmadminRoute, LockStatus, upload.any(),async (req, res) => {
   try {
+    console.log(req)
+    console.log(baseURL)
     console.log(req.files)
     const body = await convertToObject(req.params.id, req.body, req.files, req.baseURL)
     const newcertificate = await certificateController.addcertificate(req.params.id, body);
