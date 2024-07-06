@@ -9,12 +9,12 @@ function getApiURL(url) {
     if (currentURL.includes('localhost')) {
       return localhostBackend;
     } else if (currentURL.includes('amsss')) {
-        console.log("onrender);
+        console.log("onrender");
       return productionFrontend;
     } else if (currentURL.includes('xceed.nitj.ac.in')) {
       return nitjServer;
     } else {
-        console.log("local);
+        console.log("local");
       // Default to localhost if no match is found
       return localhostBackend;
     }
