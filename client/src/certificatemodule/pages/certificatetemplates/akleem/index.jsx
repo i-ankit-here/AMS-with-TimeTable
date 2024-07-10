@@ -64,7 +64,7 @@ function Template01() {
   const handleDownloadImage = async () => {
     try {
       const response = await fetch(
-        `${apiUrl}/certificatemodule/certificate/download`,
+        `${apiUrl}/certificatemodule/certificate/download/image`,
         {
           method: 'POST',
           headers: {
@@ -72,7 +72,7 @@ function Template01() {
           },
 
           credentials: 'include',
-          body: JSON.stringify({ type: "image", url: window.location.href }),
+          body: JSON.stringify({url: window.location.href }),
         }
       );
       const data = await response.blob();
@@ -119,18 +119,17 @@ function Template01() {
   // };
   const handleDownloadPDF = async () => {
     try {
-      const response = await fetch(`${apiUrl}/certificatemodule/certificate/download`, {
+      const response = await fetch(`${apiUrl}/certificatemodule/certificate/download/pdf`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
 
         credentials: 'include',
-        body: JSON.stringify({ type: "pdf", url: window.location.href }),
+        body: JSON.stringify({ url: window.location.href }),
       }, { responseType: 'blob' });
       const data = await response.blob();
       const blob = new Blob([data], { type: 'application/pdf' });
-      console.log(blob)
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
