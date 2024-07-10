@@ -13,7 +13,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",  "http://localhost:5174","https://chemcon2024.com",
-      "https://nitjtt.netlify.app",
+      "https://ankit-deploy--amsss.netlify.app",
       "http://localhost:8010",
       //for chemcon
       "http://localhost:5174","https://chemcon2024.com","https://pro1-chemcon.vercel.app",
