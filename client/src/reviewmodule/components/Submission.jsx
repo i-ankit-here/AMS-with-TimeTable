@@ -37,8 +37,8 @@ function Submission({ activeStep, setActiveStep, handlePrevious }) {
           });
           //console.log("userid:",response.data.updatedId);
           paper.authors.push(response.data.updatedId);
-          paper.pseudo_authors[currentIndex].order=response.data.updatedId;
-          paper.pseudo_authors[currentIndex].institute=response.data.mail;
+          paper.pseudo_authors[currentIndex].existing_id=response.data.updatedId;
+          paper.pseudo_authors[currentIndex].isNew=response.data.mail;
           toast({
             title: 'User added.',
             description: response.data.message || 'User have been addded.',
@@ -114,7 +114,7 @@ function Submission({ activeStep, setActiveStep, handlePrevious }) {
       p.authors && p.authors.some(author => authorsToMatch.includes(author))
     );
     console.log(papersWithMatchingAuthors,paper["title"]);
-    if (papersWithMatchingAuthors.length===0){
+    if (papersWithMatchingAuthors.length===0 || paper.pid!==''){
       var form_data = new FormData();
       for ( var key in paper ) {
           //console.log(key,":",paper[key]);

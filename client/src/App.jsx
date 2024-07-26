@@ -49,7 +49,7 @@ import CertificateForm from './certificatemodule/pages/certificatedesign';
 // import Certificate from './certificatemodule/pages/certificatetemplates/Certificate';
 import ServicePage from './pages/Service';
 import Participant from './certificatemodule/pages/participantdataupload';
-
+import UserEvents from './certificatemodule/pages/UserEvents'
 
 import EODashboard from './conferencemodule/layout/eodashboard';
 import HomeConf from './conferencemodule/Tabs/HomeConf';
@@ -82,6 +82,7 @@ import AddReviewer from './reviewmodule/pages/AddReviewer';
 import Review from './reviewmodule/pages/Review.jsx';
 import PaperSummary from './reviewmodule/pages/PaperSummary.jsx';
 import Forms from './reviewmodule/pages/Forms.jsx';
+import FormAnswers from './reviewmodule/pages/FormAnswers.jsx';
 import ReviewerQuestion from './reviewmodule/pages/ReviewQuestion';
 import DefaultQuestion from './reviewmodule/pages/DefaultQuestion.jsx';
 import ReviewerQuestionHome from './reviewmodule/pages/ReviewQuestionHome';
@@ -130,14 +131,16 @@ import QuizFeedback from './quizModule/student/quizFeedback/QuizFeedback';
 import UserManagement from './dashboard/userManagement';
 import UserEventRegistration from './certificatemodule/pages/addEvent';
 
+import Form from './platform/Form.jsx';
 
 function App() {
+  
   return (
     <Router>
       {/* <div className="app"> */}
 
       {/* <h1>XCEED-Timetable Module</h1>  */}
-      <Navbar />
+       <Navbar />
 
       <Routes>
         {/* Landing Page */}
@@ -217,6 +220,7 @@ function App() {
         <Route path="/cm/c/:eventid/:participantid" element={<Template01 />} />
         <Route path="/cm/c/:eventid/:participantid/sarthak" element={<Template03 />} />
         <Route path='/cm/useraddevent' element={< UserEventRegistration/>} />
+        <Route path="/cm/userevents/:userId" element={<UserEvents/>} />
 
     {/* Review management routes*/}
     <Route path="/prm/login" element={<ReviewLogin/>} />
@@ -231,7 +235,8 @@ function App() {
     <Route path="/prm/:eventId/editor/addreviewer" element={<AddReviewer/>}/>
     <Route path="/prm/:eventId/:paperId/:userId/Review" element={<Review/>}/>
     <Route path="/prm/:eventId/:paperId/summary" element={<PaperSummary/>}/>
-    <Route path="/prm/:eventId/:paperId/Forms" element={<Forms/>}/>
+    <Route path="/prm/:eventId/Forms" element={<Forms/>}/>
+    <Route path="/prm/:eventId/:formId/:userId/FormAnswers" element={<FormAnswers/>}/>
     <Route path="/prm/:eventId/ReviewQuestion" element={<ReviewerQuestion/>}/>
     <Route path="/prm/:eventId/ReviewQuestionHome" element={<ReviewerQuestionHome/>}/>
     <Route path="/prm/DefaultQuestion" element={<DefaultQuestion/>}/>
@@ -321,6 +326,8 @@ function App() {
                     destinationName='Home' 
                     animation={<Lottie animationData ={animation404} style={{opacity:'15%'}}/>} 
                     />}></Route>
+
+        <Route path="/platform" element={<><Form/></>}/>
       </Routes>
       {/* <Footer/> */}
       {/* </div> */}

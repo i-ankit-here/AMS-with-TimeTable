@@ -3,11 +3,13 @@ const addEventRouter = express.Router();
 const AddEventController = require("../controllers/addevent");
 const addEventController = new AddEventController();
 const protectRoute = require("../../usermanagement/privateroute");
-const ecmadminRoute = require("../../usermanagement/ecmadminroute");
+// const ecmadminRoute = require("../../usermanagement/ecmadminroute");
 const LockStatus = require("../helper/lockstatus");
+const { checkRole } = require("../../checkRole.middleware");
+const { issuedCertificates, totalCertificates } = require("../helper/countCertificates");
 
 // Route to create a new event
-addEventRouter.post("/", ecmadminRoute, async (req, res) => {
+addEventRouter.post("/", checkRole(['CM','admin']), async (req, res) => {
   try {
     const { user, ...eventData } = req.body; // extract userId from request body
 
@@ -22,6 +24,20 @@ addEventRouter.post("/", ecmadminRoute, async (req, res) => {
     return res
       .status(e?.status || 500)
       .json({ error: e?.message || "Internal Server Error" });
+  }
+});
+
+// Route for assigning an event to a specific user
+addEventRouter.post('/assignEvent/:userId', checkRole(['admin']), async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const eventData = req.body;
+
+    const newEvent = await addEventController.assignEventToUser(eventData, userId);
+
+    return res.status(201).json({ message: "Event assigned successfully", event: newEvent });
+  } catch (e) {
+    return res.status(e?.status || 500).json({ message: e?.message || "Internal Server Error" });
   }
 });
 
@@ -53,7 +69,7 @@ addEventRouter.get("/", async (req, res) => {
 
 
 // Route to update a specific event by ID
-addEventRouter.put("/:eventId",ecmadminRoute, async (req, res) => {
+addEventRouter.put("/:eventId",checkRole(['CM','admin'],true), async (req, res) => {
   try {
     const eventId = req.params?.eventId;
     const updatedEvent = req.body;
@@ -67,7 +83,7 @@ addEventRouter.put("/:eventId",ecmadminRoute, async (req, res) => {
 });
 
 
-addEventRouter.get("/getevents", ecmadminRoute, async (req, res) => {
+addEventRouter.get("/getevents", checkRole(['CM','admin']), async (req, res) => {
   try {
     const user = req?.user?.id;
     const allEvents = await addEventController.getEventByUser(user);
@@ -79,7 +95,35 @@ addEventRouter.get("/getevents", ecmadminRoute, async (req, res) => {
   }
 });
 
-addEventRouter.post("/lock/:id", ecmadminRoute, async (req, res) => {
+addEventRouter.get("/getevents/:userId", checkRole(['admin']), async (req, res) => {
+  try {
+    const { userId } = req.params;
+    console.log(userId);
+    const allEvents = await addEventController.getEventByUser(userId);
+    return res.status(200).json(allEvents);
+  } catch (e) {
+    return res
+      .status(e?.status || 500)
+      .json({ error: e?.message || "Internal Server Error" });
+  }
+});
+
+
+
+addEventRouter.get("/getCertificateCount/:eventid", checkRole(['CM','admin']), async (req, res) => {
+  try {
+    const eventId = req?.params?.eventid;
+    const issuedCount = await issuedCertificates(eventId)
+    const totalCount = await totalCertificates(eventId)
+    return res.status(200).json({issuedCount,totalCount});
+  } catch (e) {
+    return res
+      .status(e?.status || 500)
+      .json({ error: e?.message || "Internal Server Error" });
+  }
+});
+
+addEventRouter.post("/lock/:id", checkRole(['CM','admin'],true), async (req, res) => {
   try {
     const eventId = req.params.id;
     await addEventController.lockEvent(eventId);
@@ -90,6 +134,32 @@ addEventRouter.post("/lock/:id", ecmadminRoute, async (req, res) => {
       .json({ error: e?.message || "Internal Server Error" });
   }
 });
+
+addEventRouter.post("/unlock/:id", checkRole(['admin']), async (req, res) => {
+  try {
+    const eventId = req.params.id;
+    await addEventController.unlockEvent(eventId);
+    return res.status(200).json({message:'Unlock succesful'});
+  } catch (e) {
+    return res
+      .status(e?.status || 500)
+      .json({ error: e?.message || "Internal Server Error" });
+  }
+});
+
+addEventRouter.delete("/delete/:id", checkRole(['admin']), async (req, res) => {
+  try {
+    const eventId = req.params.id;
+    await addEventController.deleteEventById(eventId);
+    return res.status(200).json({message:'deleted succesfully'});
+  } catch (e) {
+    return res
+      .status(e?.status || 500)
+      .json({ error: e?.message || "Internal Server Error" });
+  }
+});
+
+
 
 
 module.exports = addEventRouter;

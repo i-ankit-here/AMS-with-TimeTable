@@ -32,19 +32,34 @@ function CMDashboard() {
   const fetchEvents = async () => {
     try {
       const response = await fetch(`${apiUrl}/certificatemodule/addevent/getevents`, {
-          method: "GET",
-          headers: {
+        method: "GET",
+        headers: {
           "Content-Type": "application/json",
-          },
-          credentials: "include",
-        }
+        },
+        credentials: "include",
+      }
       );
-
-       // console.log("Response status:", response.status);
 
       if (response.ok) {
         const data = await response.json();
         setTable(data);
+        try {
+          for (let i = 0; i < data.length; i++) {
+            const response = await fetch(`${apiUrl}/certificatemodule/addevent/getCertificateCount/${data[i]._id}`, {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              credentials: "include",
+            })
+            const {issuedCount,totalCount} = await response.json();
+            data[i].totalCertificates = totalCount;
+            data[i].certificatesIssued = issuedCount;
+            setTable(data)
+          }
+        } catch (error) {
+
+        }
 
         if (data.length > 0) {
           const lastEventLocked = data[data.length - 1].lock;
@@ -53,6 +68,9 @@ function CMDashboard() {
           // Check if all events are locked
           const allLocked = data.every((event) => event.lock);
           setAllEventsLocked(allLocked);
+        } else {
+          // If no events, allow adding a new one
+          setAllEventsLocked(true);
         }
       } else {
         console.error("Failed to fetch events");
@@ -61,35 +79,47 @@ function CMDashboard() {
       console.error("Error:", error);
     }
   };
+
   const lockEvent = async (id) => {
     try {
       const confirmed = window.confirm('Sure? You wont be able to edit any content once locked!');
 
       if (!confirmed) {
-          // If the user cancels, do nothing
+        // If the user cancels, do nothing
         return;
       }
+
       const response = await fetch(`${apiUrl}/certificatemodule/addevent/lock/${id}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-          body: JSON.stringify({ lock: true }),
-        }
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ lock: true }),
+      }
       );
 
       if (response.ok) {
-        setEventLocked(true);
-        toast({
-          title: 'Event Locked',
-          description: 'The event has been locked successfully.',
-          status: 'success',
-          duration: 3000,
-          isClosable: true,
-          position: 'middle',
-        });
-        fetchEvents(); // Fetch events again to update the state
+        // Find the index of the event to lock
+        const eventIndex = table.findIndex(event => event._id === id);
+        if (eventIndex !== -1) {
+          const updatedTable = [...table];
+          updatedTable[eventIndex].lock = true;
+          setTable(updatedTable);
+
+          // Update the state for whether all events are locked
+          const allLocked = updatedTable.every(event => event.lock);
+          setAllEventsLocked(allLocked);
+
+          toast({
+            title: 'Event Locked',
+            description: 'The event has been locked successfully.',
+            status: 'success',
+            duration: 3000,
+            isClosable: true,
+            position: 'middle',
+          });
+        }
       } else {
         console.error('Failed to lock the event');
       }
@@ -127,7 +157,7 @@ function CMDashboard() {
         colorScheme="teal"
         onClick={handleAddEvent}
         mb={4}
-        isDisabled={!areAllEventsLocked} // Button is always visible but only enabled when all events are locked
+        isDisabled={!(table.length === 0 || areAllEventsLocked)} // Button is enabled when there are no events or all events are locked
         float="right"
       >
         Add New Event

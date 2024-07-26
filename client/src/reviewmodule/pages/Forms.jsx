@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import JoditEditor from 'jodit-react';
 import axios from 'axios';
 import { useToast, FormLabel, FormControl, Input, Button, chakra, Heading, IconButton, Box, Text, Checkbox, Select } from '@chakra-ui/react';
-import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import './ReviewQuestion.css'; // Import the CSS file
 import getEnvironment from '../../getenvironment';
 
@@ -19,15 +19,15 @@ const Forms = () => {
   const [accessRole, setAccessRole] = useState('');
   const [show, setShow] = useState(false);
   const toast = useToast();
-  const { eventId, paperId } = useParams();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { eventId } = useParams(); // Removed paperId from useParams
+  const [searchParams] = useSearchParams();
   const [edit, setEdit] = useState((searchParams.get('edit')) ? searchParams.get('edit') : false); // this stores the id of question or false(new question)
 
   if (edit) useEffect(() => { fetchSavedQuestion(edit) }, [edit])
 
   const fetchSavedQuestion = async (qId) => {
     try {
-      const response = await axios.get(`${apiUrl}/api/v1/reviewmodule/forms/${qId}`);
+      const response = await axios.get(`${apiUrl}/reviewmodule/forms/${qId}`);
       setQuestions(response.data);
       // setLoading(false);
     } catch (error) {
@@ -82,7 +82,6 @@ const Forms = () => {
   const handleSubmit = async () => {
     const newQuestion = {
       eventId,
-      paperId,
       question: [question],
       show,
       type: [type],
@@ -125,7 +124,6 @@ const Forms = () => {
       setSection('');
       setAccessRole('');
       setShow(false);
-      window.history.go(edit ? -2 : -1); // i dont know how to navigate in the 'REACT-WAY', so sorry for this plain js code
     } catch (error) {
       toast({
         title: 'Error saving question.',
@@ -174,10 +172,11 @@ const Forms = () => {
   return (
     <div className="add-question-page">
       <Box bg="black" p={0.2} width='80%'>
-        <HeaderReviewQuestion color="white" textAlign="center" title={'Add Review Question' + (type ? ' - ' + type : '')} />
+        <HeaderReviewQuestion color="white" textAlign="center" title={'Fill the Form' + (type ? ' - ' + type : '')} />
       </Box>
       <br />
-      <FormControl onSubmit={handleSubmit} className="question-form">
+      <FormControl onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="question-form">
+
         <div className="form-group">
           <Box bg={'#48835d'} style={{ fontWeight: '500', opacity: '100%', borderTopLeftRadius: '5px', borderTopRightRadius: '5px' }} p={2}>
             <Text color="white" textAlign={'center'}>Question</Text>
@@ -229,11 +228,15 @@ const Forms = () => {
                   onKeyPress={handleKeyPress}
                 />
                 {options.length > 1 && (
-                  <Button type="button" colorScheme='red' onClick={() => handleRemoveOption(index)}>Remove</Button>
+                  <Button type="button" onClick={() => handleRemoveOption(index)}>
+                    Remove
+                  </Button>
                 )}
               </div>
             ))}
-            <Button type="button" colorScheme='green' onClick={handleAddOption}>Add Option</Button>
+            <Button type="button" onClick={handleAddOption}>
+              Add Option
+            </Button>
           </div>
         )}
         <div className="form-group">
@@ -244,6 +247,7 @@ const Forms = () => {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            onKeyPress={handleKeyPress}
           />
         </div>
         <div className="form-group">
@@ -254,47 +258,31 @@ const Forms = () => {
             type="text"
             value={section}
             onChange={(e) => setSection(e.target.value)}
+            onKeyPress={handleKeyPress}
           />
         </div>
         <div className="form-group">
           <Box bg={'#48835d'} style={{ fontWeight: '500', opacity: '100%', borderTopLeftRadius: '5px', borderTopRightRadius: '5px' }} p={2}>
             <Text color="white" textAlign={'center'}>Access Role</Text>
           </Box>
-          <Input
-            type="text"
-            value={accessRole}
-            onChange={(e) => setAccessRole(e.target.value)}
-          />
+          <Select value={accessRole} onChange={(e) => setAccessRole(e.target.value)}>
+            <option value="">Select Access Role</option>
+            <option value="Admin">Admin</option>
+            <option value="Editor">Editor</option>
+            <option value="Reviewer">Reviewer</option>
+            <option value="Author">Author</option>
+          </Select>
         </div>
         <div className="form-group">
-          <Checkbox
-            isChecked={show}
-            onChange={(e) => setShow(e.target.checked)}
-          >
-            Show
-          </Checkbox>
+          <Checkbox isChecked={show} onChange={(e) => setShow(e.target.checked)}>Show</Checkbox>
         </div>
-        {edit ? (
-          <Link
-            onClick={handleSubmit}
-            className="tw-m-auto tw-px-8 tw-text-white tw-bg-gradient-to-r tw-from-cyan-600 tw-to-cyan-500 hover:tw-bg-gradient-to-bl focus:tw-ring-4 focus:tw-outline-none focus:tw-ring-cyan-300 dark:focus:tw-ring-cyan-800 tw-font-bold tw-rounded-lg tw-text-sm tw-px-5 tw-py-2.5 tw-text-center"
-          >
-            Update Question
-          </Link>
-        ) : (
-          (!type) ? '' : (
-            <Link
-              onClick={handleSubmit}
-              className="tw-m-auto tw-px-8 tw-text-white tw-bg-gradient-to-r tw-from-cyan-600 tw-to-cyan-500 hover:tw-bg-gradient-to-bl focus:tw-ring-4 focus:tw-outline-none focus:tw-ring-cyan-300 dark:focus:tw-ring-cyan-800 tw-font-bold tw-rounded-lg tw-text-sm tw-px-5 tw-py-2.5 tw-text-center"
-            >
-              Save Question
-            </Link>
-          )
-        )
-        }
+        <Button type="button" onClick={handleSubmit}>
+          Submit
+        </Button>
       </FormControl>
     </div>
   );
 };
 
 export default Forms;
+
