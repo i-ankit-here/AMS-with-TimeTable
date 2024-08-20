@@ -38,6 +38,9 @@ import EditMasterFaculty from './timetableadmin/editmasterfaculty';
 import ImportForm from './timetableadmin/importCentralRoom'
 import MergePDFComponent from './filedownload/mergepdfdocuments';
 import TimetableMasterView from './timetableadmin/masterview';
+import MasterDataTable from './timetableadmin/viewmasterclasstable.jsx';
+import MasterLoadDataTable from './timetableadmin/viewinstituteloadmaster.jsx';
+import Departmentloadallocation from './timetableadmin/departmentloadallocation.jsx';
 
 import Home from './pages/Home';
 import ErrorPage from './pages/ErrorPage.jsx';
@@ -50,6 +53,8 @@ import CertificateForm from './certificatemodule/pages/certificatedesign';
 import ServicePage from './pages/Service';
 import Participant from './certificatemodule/pages/participantdataupload';
 import UserEvents from './certificatemodule/pages/UserEvents'
+import UserLogos from './certificatemodule/pages/UserLogo.jsx';
+import UserSignatures from './certificatemodule/pages/UserSignatures.jsx';
 
 import EODashboard from './conferencemodule/layout/eodashboard';
 import HomeConf from './conferencemodule/Tabs/HomeConf';
@@ -133,6 +138,7 @@ import UserEventRegistration from './certificatemodule/pages/addEvent';
 
 import Form from './platform/Form.jsx';
 import AllForms from './reviewmodule/pages/AllForms.jsx';
+import Reviews from './reviewmodule/pages/Reviews.jsx';
 
 function App() {
   
@@ -167,6 +173,7 @@ function App() {
           <Route path="mastersem" element={<MasterSem />} />
           <Route path="masterdelete" element={<MasterDelete />} />
           <Route path="viewmrooms" element={<ViewMRooms />} />
+          <Route path="masterdata" element={<MasterDataTable />} />
           
         </Route>
 
@@ -208,11 +215,13 @@ function App() {
         <Route path="/tt/admin/view" element={<View />} />
         <Route path="/tt/admin/instituteload" element={<InstituteLoad />} />
         <Route path="/tt/viewinstituteload" element={<ViewInstituteLoad />} />
+        <Route path="/tt/masterload" element={<MasterLoadDataTable />} />
 
         <Route
           path="/tt/:generatedLink/generatepdf/mergepdf"
           element={<MergePDFComponent />}
         />
+        <Route path="/tt/:generatedLink/generatepdf/loadallocation" element={<Departmentloadallocation />} />
 
         <Route path="/cm/addevent" element={<EventRegistration />} />
         <Route path="/cm/dashboard" element={<CMDashboard />} />
@@ -222,6 +231,8 @@ function App() {
         <Route path="/cm/c/:eventid/:participantid/sarthak" element={<Template03 />} />
         <Route path='/cm/useraddevent' element={< UserEventRegistration/>} />
         <Route path="/cm/userevents/:userId" element={<UserEvents/>} />
+        <Route path="/cm/userimages/logos/:userId" element={<UserLogos />} />
+        <Route path="/cm/userimages/signatures/:userId" element={<UserSignatures />} />
 
     {/* Review management routes*/}
     <Route path="/prm/login" element={<ReviewLogin/>} />
@@ -236,8 +247,9 @@ function App() {
     <Route path="/prm/:eventId/editor/addreviewer" element={<AddReviewer/>}/>
     <Route path="/prm/:eventId/:paperId/:userId/Review" element={<Review/>}/>
     <Route path="/prm/:eventId/:paperId/summary" element={<PaperSummary/>}/>
+    <Route path="/prm/:eventId/:paperId/reviews" element={<Reviews/>}/>
     <Route path="/prm/:eventId/Forms" element={<Forms/>}/>
-    <Route path="/prm/:eventId/:formId/:userId/FormAnswers" element={<FormAnswers/>}/>
+    <Route path="/prm/:eventId/:formId/FormAnswers" element={<FormAnswers/>}/>
     <Route path="/prm/:eventId/ReviewQuestion" element={<ReviewerQuestion/>}/>
     <Route path="/prm/:eventId/ReviewQuestionHome" element={<ReviewerQuestionHome/>}/>
     <Route path="/prm/DefaultQuestion" element={<DefaultQuestion/>}/>

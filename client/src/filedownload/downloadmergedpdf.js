@@ -1,4 +1,6 @@
 import pdfMakeInitializer from './pdfMakeInitializer';
+// Import other dependencies
+
 
 pdfMakeInitializer(); 
 
@@ -6,13 +8,15 @@ import header from '../assets/header.png';
 import footer from '../assets/footer.png';
 import { CustomTh, CustomLink, CustomBlueButton } from '../styles/customStyles';
 
+//pdfMake.vfs = pdfFonts.vfs;
+
 
 // pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 //pdfMake.vfs=pdfFonts && pdfFonts.pdfMake ? pdfFonts.pdfMake.vfs : globalThis.pdfMake.vfs;
 
 
-function downloadPDF(timetableData, summaryData, type, ttdata, updatedTime, headTitle,notes) {
+function downloadPDF(timetableData, summaryData, type, ttdata, updatedTime, headTitle,notes,array) {
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 // console.log('type',type)
 // console.log('ttdataaaa',timetableData)
@@ -387,7 +391,9 @@ const session = ttdata[0].session;
         ],
       };
 
-      pdfMake.createPdf(documentDefinition).download(`${headTitle}_timetable.pdf`);
+      pdfMake.createPdf(documentDefinition).getBuffer((blob)=>{
+        array.push(blob)
+      });
     };
   };
 }
