@@ -1,11 +1,9 @@
 const multer = require("multer");
 const path = require("path");
-const fs = require('fs');
-
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const p = path.join(__dirname, '../../../../uploads/certificateModuleImages/')
+    const p = path.join(__dirname, '../../../../uploads/certificateModuleImages');
     cb(null, p);
   },
   filename: function (req, file, cb) {
