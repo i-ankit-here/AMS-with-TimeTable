@@ -7,7 +7,6 @@ const cookieParser = require("cookie-parser");
 const path = require("path");
 const axios = require("axios");
 const v1router = require("./routes");
-
 // CORS configuration
 app.use(
   cors({
@@ -20,6 +19,8 @@ app.use(
       "http://localhost:5174","https://chemcon2024.com","https://pro1-chemcon.vercel.app",
   //for eaic2025
   "https://eaicnitj.com",
+  //for civil site
+  "https://bejewelled-dodol-5034a5.netlify.app",
     ], // Change this to your allowed origins or '*' to allow all origins
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     optionsSuccessStatus: 204,
