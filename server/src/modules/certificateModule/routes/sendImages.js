@@ -7,6 +7,7 @@ imageRouter.get("/uploads/certificateModuleImages/*",(req,res)=>{
         const p = req.url
         const image = path.join(__dirname,"../../../../",p)
         const parts = image.split(".")
+        console.log(image);
         if(parts[parts.length-1].toLocaleLowerCase()=="png" || parts[parts.length-1].toLocaleLowerCase()=="jpg" || parts[parts.length-1].toLocaleLowerCase()=="jpeg"){return res.sendFile(image)}
         else{
             res
